@@ -13,4 +13,4 @@ echo $BUILD_ENV
 docker build --build-arg BUILD_ENV=${BUILD_ENV} -t incognito/incognito-webview-chart:${BUILD_ENV} .
 docker stop incognito-webview-chart-${BUILD_ENV}
 docker rm incognito-webview-chart-${BUILD_ENV}
-docker run -d --restart always --name incognito-webview-chart-${BUILD_ENV} -p 127.0.0.1:${PORT_MAPS[${BUILD_ENV}]}:${PORT_MAPS[${BUILD_ENV}]} incognito/incognito-webview-chart:${BUILD_ENV}
+docker run -d --restart always --name incognito-webview-chart-${BUILD_ENV} -p 127.0.0.1:${PORT_MAPS[${BUILD_ENV}]}:80 incognito/incognito-webview-chart:${BUILD_ENV}
