@@ -69,7 +69,7 @@ const Home = () => {
     return (
         <Styled>
             <div ref={ref} id="chart" />
-            <button
+            {/* <button
                 onClick={(e) => {
                     e.preventDefault();
                     copy(JSON.stringify(json));
@@ -77,7 +77,7 @@ const Home = () => {
                 type="button"
             >
                 Copy data
-            </button>
+            </button> */}
         </Styled>
     );
 };
