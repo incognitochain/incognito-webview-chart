@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import * as LightweightCharts from 'lightweight-charts';
 import { isJSONString } from 'src/utils';
-// import copy from 'copy-to-clipboard';
+import isEmpty from 'lodash/isEmpty';
+import copy from 'copy-to-clipboard';
 
 declare global {
     interface Window {
@@ -15,48 +16,43 @@ declare global {
 
 const Styled = styled.div``;
 
+const delay = (ms: number) => new Promise((resolve, reject) => setTimeout(resolve, ms));
+
 const Home = () => {
-    const ref: any = React.useRef({});
-    const [chart, setChart] = React.useState<any>(null);
-    const [json, setJSON] = React.useState<any>({
-        candles: [],
-        chartConfigs: {},
-        supportWebView: false,
-        listeningEvent: false,
-        data: {},
-    });
-    const handleConfigsChart = (configs?: any) => {
+    let ref: any = React.useRef({});
+    const [chartConfigs, setChartConfigs] = React.useState<any>(null);
+    const [candles, setCandles] = React.useState<any[]>([]);
+    const [visible, setVisible] = React.useState(false);
+    const handleConfigsChart = async (configs?: any, candles?: any[]) => {
         try {
             const { lwChartConfigs, lwChartOptions, candlesStickConfigs, candlesStickOptions } = configs;
-            const lwChart = LightweightCharts.createChart(ref?.current, lwChartConfigs);
+            let lwChart = LightweightCharts.createChart(ref?.current, lwChartConfigs);
             lwChart.applyOptions(lwChartOptions);
             const candlestickSeries = lwChart.addCandlestickSeries(candlesStickConfigs);
             candlestickSeries.applyOptions(candlesStickOptions);
-            setChart(candlestickSeries);
+            if (candles) {
+                candlestickSeries.setData(candles);
+            }
         } catch (error) {
             console.log('error', error);
         }
     };
     const handleMessage = async (message: any) => {
-        setJSON({ ...json, listeningEvent: true });
         if (message?.data) {
-            setJSON({ ...json, data: message?.data });
             let msgData = message.data;
             let [command, data] = msgData?.split('|');
             if (isJSONString(data)) {
                 data = JSON.parse(data);
             }
             switch (command) {
-                case 'candles': {
-                    if (chart) {
-                        setJSON({ ...json, candles: msgData });
-                        chart.setData(data);
-                    }
-                    break;
-                }
-                case 'chartConfigs': {
-                    setJSON({ ...json, chartConfigs: msgData });
-                    handleConfigsChart(data);
+                case 'configsChart': {
+                    const { chartConfigs, candles } = data;
+                    await setVisible(false);
+                    await delay(0);
+                    await setVisible(true);
+                    setChartConfigs(chartConfigs);
+                    setCandles(candles);
+                    handleConfigsChart(chartConfigs, candles);
                     break;
                 }
                 default:
@@ -73,10 +69,9 @@ const Home = () => {
                 window.removeEventListener('message', handleMessage);
             };
         }
-    }, [chart]);
+    }, []);
     React.useEffect(() => {
         if (window?.ReactNativeWebView) {
-            setJSON({ ...json, supportWebView: true });
             window.ReactNativeWebView.postMessage(
                 JSON.stringify({
                     initted: true,
@@ -86,16 +81,9 @@ const Home = () => {
     }, []);
     return (
         <Styled>
-            {/* <button
-                onClick={(e) => {
-                    e.preventDefault();
-                    copy(JSON.stringify(json));
-                }}
-                type="button"
-            >
-                Copy data
-            </button> */}
-            <div ref={ref} id="chart" />
+            {/* <div>chartConfigs: {JSON.stringify(chartConfigs)}</div>
+            <div>candles: {candles.length}</div> */}
+            {visible && <div ref={ref} id="chart" />}
         </Styled>
     );
 };
