@@ -18,6 +18,7 @@ const delay = (ms: number) => new Promise((resolve, reject) => setTimeout(resolv
 
 const Home = () => {
     let ref: any = React.useRef({});
+    const [msg, setMsg] = React.useState('');
     const [chartConfigs, setChartConfigs] = React.useState<any>(null);
     const [candles, setCandles] = React.useState<any[]>([]);
     const [visible, setVisible] = React.useState(false);
@@ -92,15 +93,30 @@ const Home = () => {
         }
     }, []);
     React.useEffect(() => {
+        setMsg('MOUNTED');
         if (window?.ReactNativeWebView) {
+            setMsg('HAS WINDOW WEBVIEW');
             window.ReactNativeWebView.postMessage(
                 JSON.stringify({
                     initted: true,
                 }),
             );
         }
+        if (document?.ReactNativeWebView) {
+            setMsg('HAS DOCUMENT WEBVIEW');
+            document.ReactNativeWebView.postMessage(
+                JSON.stringify({
+                    initted: true,
+                }),
+            );
+        }
     }, []);
-    return <Styled>{visible && <div ref={ref} id="chart" />}</Styled>;
+    return (
+        <>
+            <p style={{ color: '#FFF' }}>{msg}</p>
+            <Styled>{visible && <div ref={ref} id="chart" />}</Styled>
+        </>
+    );
 };
 
 export default React.memo(Home);
