@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react';
 import styled from 'styled-components';
 import * as LightweightCharts from 'lightweight-charts';
 import { isJSONString } from 'src/utils';
+import copy from 'copy-to-clipboard';
 
 declare global {
     interface Window {
@@ -113,8 +115,18 @@ const Home = () => {
     }, []);
     return (
         <>
-            <p style={{ color: '#FFF' }}>{msg}</p>
-            <Styled>{visible && <div ref={ref} id="chart" />}</Styled>
+            <p
+                style={{ color: '#FFF' }}
+                onClick={() => {
+                    alert('copied');
+                    copy(msg);
+                }}
+            >
+                {msg}
+            </p>
+            <Styled>
+                <div ref={ref} id="chart" />
+            </Styled>
         </>
     );
 };
