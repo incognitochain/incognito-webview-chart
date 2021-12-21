@@ -95,9 +95,7 @@ const Home = () => {
         }
     }, []);
     React.useEffect(() => {
-        setMsg('MOUNTED');
         if (window?.ReactNativeWebView) {
-            setMsg('HAS WINDOW WEBVIEW');
             window.ReactNativeWebView.postMessage(
                 JSON.stringify({
                     initted: true,
@@ -105,7 +103,6 @@ const Home = () => {
             );
         }
         if (document?.ReactNativeWebView) {
-            setMsg('HAS DOCUMENT WEBVIEW');
             document.ReactNativeWebView.postMessage(
                 JSON.stringify({
                     initted: true,
@@ -114,20 +111,9 @@ const Home = () => {
         }
     }, []);
     return (
-        <>
-            <p
-                style={{ color: '#FFF' }}
-                onClick={() => {
-                    alert('copied');
-                    copy(msg);
-                }}
-            >
-                {msg}
-            </p>
-            <Styled>
-                <div ref={ref} id="chart" />
-            </Styled>
-        </>
+        <Styled>
+            <div ref={ref} id="chart" />
+        </Styled>
     );
 };
 
