@@ -112,11 +112,11 @@ export const darkTheme: ITheme = {
     toastBg: COLORS.black3,
 };
 
-export const DEFAULT_THEME = lightTheme;
+export const DEFAULT_THEME = darkTheme;
 
 export const GlobalStyled = createGlobalStyle`
     html {
-        background: ${COLORS.lightGrey19};
+        background: ${(props: IGlobalStyle) => props.theme.body};
     }
 
     #root {

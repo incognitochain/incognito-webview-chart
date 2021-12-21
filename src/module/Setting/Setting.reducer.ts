@@ -32,7 +32,7 @@ const initialState: ISettingReducer = {
     },
     decimalDigits: true,
     isDev: false,
-    darkMode: false,
+    darkMode: true,
     theme: DEFAULT_THEME,
     language: 'en',
     server: MAINNET_SERVER,
@@ -80,7 +80,7 @@ const settingReducer = (
 const persistConfig = {
     key: 'setting',
     storage,
-    whitelist: ['dev', 'decimalDigits', 'darkMode', 'theme'],
+    whitelist: ['dev', 'decimalDigits'],
     stateReconciler: autoMergeLevel2,
 };
 

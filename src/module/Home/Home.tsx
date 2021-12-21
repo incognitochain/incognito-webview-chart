@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import * as LightweightCharts from 'lightweight-charts';
 import { isJSONString } from 'src/utils';
-import isEmpty from 'lodash/isEmpty';
-import copy from 'copy-to-clipboard';
 
 declare global {
     interface Window {
@@ -25,13 +23,36 @@ const Home = () => {
     const [visible, setVisible] = React.useState(false);
     const handleConfigsChart = async (configs?: any, candles?: any[]) => {
         try {
-            const { lwChartConfigs, lwChartOptions, candlesStickConfigs, candlesStickOptions } = configs;
+            const {
+                lwChartConfigs,
+                lwChartOptions,
+                candlesStickConfigs,
+                candlesStickOptions,
+                type,
+                areaStickConfigs,
+                areaStickOptions,
+            } = configs;
             let lwChart = LightweightCharts.createChart(ref?.current, lwChartConfigs);
             lwChart.applyOptions(lwChartOptions);
-            const candlestickSeries = lwChart.addCandlestickSeries(candlesStickConfigs);
-            candlestickSeries.applyOptions(candlesStickOptions);
-            if (candles) {
-                candlestickSeries.setData(candles);
+            switch (type) {
+                case 'candles': {
+                    const candlestickSeries = lwChart.addCandlestickSeries(candlesStickConfigs);
+                    candlestickSeries.applyOptions(candlesStickOptions);
+                    if (candles) {
+                        candlestickSeries.setData(candles);
+                    }
+                    break;
+                }
+                case 'area': {
+                    const areaStick = lwChart.addAreaSeries(areaStickConfigs);
+                    areaStick.applyOptions(areaStickOptions);
+                    if (candles) {
+                        areaStick.setData(candles);
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
         } catch (error) {
             console.log('error', error);
@@ -79,13 +100,7 @@ const Home = () => {
             );
         }
     }, []);
-    return (
-        <Styled>
-            {/* <div>chartConfigs: {JSON.stringify(chartConfigs)}</div>
-            <div>candles: {candles.length}</div> */}
-            {visible && <div ref={ref} id="chart" />}
-        </Styled>
-    );
+    return <Styled>{visible && <div ref={ref} id="chart" />}</Styled>;
 };
 
 export default React.memo(Home);
