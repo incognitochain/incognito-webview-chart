@@ -4,7 +4,7 @@ export const COLORS = {
     white: 'white',
     black: '#000000',
     black1: '#333335',
-    black2: '#121212',
+    black2: '#303030',
     black3: '#222223',
     black4: '#222222',
     blue: '#25CDD6',

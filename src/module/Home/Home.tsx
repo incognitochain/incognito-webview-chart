@@ -108,7 +108,10 @@ const Home = () => {
             );
         }
     }, []);
-    return <Styled>{visible && <div ref={ref} id="chart" />}</Styled>;
+    if (!visible) {
+        return null;
+    }
+    return <div ref={ref} id="chart" />;
 };
 
 export default React.memo(Home);
